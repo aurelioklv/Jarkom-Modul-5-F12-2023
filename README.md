@@ -1,5 +1,5 @@
 # Jarkom-Modul-5-F12-2023
-##SETTING
+## SETTING
 PEMBAGIAN SUBNET 
 ![image](https://github.com/aurelioklv/Jarkom-Modul-5-F12-2023/assets/114126015/9a0a5b8a-716b-4fbd-8cca-113b242f7083)
 PERHITUNGAN MAX SUBNET
@@ -231,4 +231,18 @@ iptables -A INPUT -j REJECT
 ```
 iptables -A INPUT -m time --timestart 12:00 --timestop 13:00 --weekdays Mon,Tue,Wed,Thu -j REJECT
 iptables -A INPUT -m time --timestart 11:00 --timestop 13:00 --weekdays Fri -j REJECT
+```
+8. Start dan Sein
+```
+iptables -A INPUT -p tcp --dport 80 -s 192.227.14.150 -m time --datestart 2023-12-10 --datestop 2024-02-15 -j DROP
+```
+9. Stark dan Sein
+```
+iptables -N scan_port
+
+iptables -A INPUT -m recent --name scan_port --update --seconds 600 --hitcount 20 -j DROP
+iptables -A FORWARD -m recent --name scan_port --update --seconds 600 --hitcount 20 -j DROP
+
+iptables -A INPUT -m recent --name scan_port --set -j ACCEPT
+iptables -A FORWARD -m recent --name scan_port --set -j ACCEPT
 ```
