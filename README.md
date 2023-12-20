@@ -187,7 +187,89 @@ options {
 
 service bind9 restart
 ```
+DHCP SERVER
+```
+echo 'nameserver 192.168.122.1' > /etc/resolv.conf
 
+apt update
+apt install netcat -y
+apt install isc-dhcp-server -y
+
+echo 'INTERFACESv4="eth0"' > /etc/default/isc-dhcp-server
+
+echo '
+# option definitions common to all supported networks...
+option domain-name "example.org";
+option domain-name-servers ns1.example.org, ns2.example.org;
+
+default-lease-time 600;
+max-lease-time 7200;
+
+# have support for DDNS.)
+ddns-update-style none;
+
+# A3
+Subnet 192.227.8.0 netmask 255.255.252.0 {
+  range 192.227.8.2 192.227.8.254;
+  option routers 192.227.8.1;
+  option broadcast-address 192.227.11.255;
+  option domain-name-servers 192.227.14.146;
+  default-lease-time 720;
+  max-lease-time 7200;
+}
+
+# A2
+subnet 192.227.0.0 netmask 255.255.248.0 {
+  range 192.227.0.2 192.227.7.254;
+  option routers 192.227.0.1;
+  option broadcast-address 192.227.7.255;
+  option domain-name-servers 192.227.14.146;
+  default-lease-time 720;
+  max-lease-time 7200;
+}
+
+# A7
+subnet 192.227.12.0 netmask 255.255.254.0 {
+  range 192.227.12.2 192.227.13.254;
+  option routers 192.227.12.1;
+  option broadcast-address 192.227.13.255;
+  option domain-name-servers 192.227.14.146;
+  default-lease-time 720;
+  max-lease-time 7200;
+}
+
+# A8
+subnet 192.227.14.0 netmask 255.255.255.128 {
+  range 192.227.14.3 192.227.14.126;
+  option routers 192.227.14.1;
+  option broadcast-address 192.227.14.127;
+  option domain-name-servers 192.227.14.146;
+  default-lease-time 720;
+  max-lease-time 7200;
+}
+
+# A1
+subnet 192.227.14.128 netmask 255.255.255.252 {}
+
+# A4
+subnet 192.227.14.132 netmask 255.255.255.252 {}
+
+# A5
+subnet 192.227.14.136 netmask 255.255.255.252 {}
+
+# A6
+subnet 192.227.14.140 netmask 255.255.255.252 {}
+
+# A9
+subnet 192.227.14.144 netmask 255.255.255.252 {}
+
+# A10
+subnet 192.227.14.148 netmask 255.255.255.252 {}
+' > /etc/dhcp/dhcpd.conf
+
+service isc-dhcp-server start
+
+```
 1. Aura
 ```
 IPETH0="$(ip -br a | grep eth0 | awk '{print $NF}' | cut -d'/' -f1)"
